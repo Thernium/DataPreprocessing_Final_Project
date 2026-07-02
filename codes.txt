@@ -1,0 +1,560 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "b3b42638",
+   "metadata": {},
+   "source": [
+    "# **Phase 1 - Dataset Generation with NumPy (Steps 1-10)**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "bd805cf0",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import numpy as np\n",
+    "import requests\n",
+    "\n",
+    "rng = np.random.default_rng(seed=26)\n",
+    "np.random.seed(26)\n",
+    "# print(np.random.randint(1, 100))\n",
+    "# print(np.random.randint(1, 100))\n",
+    "# print(np.random.randint(1, 100))"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "d4d50d64",
+   "metadata": {},
+   "source": [
+    "## Identity"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dbc829ac",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# Employees IDs\n",
+    "numeric_part = np.random.choice(np.arange(100000, 999999), size=500, replace=False)\n",
+    "employee_ids = np.array([f\"EMP{n}\" for n in numeric_part])"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "06781da5",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#using random-user generator API for \"name\"\n",
+    "# Get 500 random users in one call\n",
+    "response = requests.get(\"https://randomuser.me/api/\", params={\"results\": 500})\n",
+    "data = response.json()[\"results\"]\n",
+    "# Employees Names\n",
+    "employee_first_names = np.array([person[\"name\"][\"first\"] for person in data])\n",
+    "employee_last_names = np.array([person[\"name\"][\"last\"] for person in data])\n",
+    "\n",
+    "#Employees Gender\n",
+    "employee_gender = np.random.choice([\"Male\", \"Female\"], size=500)\n",
+    "\n",
+    "#Employees Age\n",
+    "# employee_dateOfBirth = np.array([f\"{np.random.randint(1966, 2007)}-{np.random.randint(1, 12)}-{np.random.randint(1, 31)}\" for i in range(500)])\n",
+    "employee_age = np.random.randint(22, 50, size=500)\n",
+    "# print(len(employee_age))\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "36c0d510",
+   "metadata": {},
+   "source": [
+    "## Contact"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "27522a15",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employees Email\n",
+    "employee_emails = np.array([])\n",
+    "for emp in range(500):\n",
+    "    first_name = employee_first_names[emp].lower()\n",
+    "    last_name = employee_last_names[emp].lower()\n",
+    "    email = f\"{first_name}.{last_name}{np.random.randint(100, 999)}@email.com\"\n",
+    "    employee_emails = np.append(employee_emails, email)\n",
+    "\n",
+    "#Employees PhoneNumber               Example: +123 901 2345678\n",
+    "employee_phoneNumbers = np.array([f\"+{np.random.randint(1, 203)} 0{np.random.randint(900, 999)}{np.random.randint(1000000, 9999999)}\" for i in range(500)])\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "42e89869",
+   "metadata": {},
+   "source": [
+    "## **Employment**\n",
+    "job_title, department, manager_id, hire_date, employment_status(active/terminated/on leave), employment_type (full-time/part-time/contract)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "dc2000c3",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "departments_titles = {\n",
+    "    \"Engineering\": [\"Software Engineer\", \"Senior Software Engineer\", \"DevOps Engineer\", \"QA Engineer\", \"Engineering Manager\"],\n",
+    "    \"Sales\": [\"Sales Representative\", \"Account Executive\", \"Sales Manager\", \"Business Development Rep\"],\n",
+    "    \"Marketing\": [\"Marketing Specialist\", \"Content Strategist\", \"SEO Analyst\", \"Marketing Manager\"],\n",
+    "    \"HR\": [\"HR Generalist\", \"Recruiter\", \"HR Manager\", \"Talent Acquisition Specialist\"],\n",
+    "    \"Finance\": [\"Financial Analyst\", \"Accountant\", \"Finance Manager\", \"Controller\"],\n",
+    "}\n",
+    "\n",
+    "# print(list(departments_titles.keys()))"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "4b235a7e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Department\n",
+    "employee_department = np.random.choice(list(departments_titles.keys()), size=500)\n",
+    "# print(f\"{len(employee_department)} | {type(employee_department)}\")\n",
+    "\n",
+    "#Employee Job Title\n",
+    "employee_jobTitle = np.array([])\n",
+    "for mpl in range(500):\n",
+    "    choices = departments_titles[employee_department[mpl]]\n",
+    "    jobTitle = np.random.choice(choices)\n",
+    "    employee_jobTitle = np.append(employee_jobTitle, jobTitle)\n",
+    "    "
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "14afe25a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# #Employee Manager ID\n",
+    "# managers_list = np.random.choice(employee_ids, size=50, replace=False)\n",
+    "# print(len(set(managers_list)))\n",
+    "\n",
+    "# employee_managerID = np.array([])\n",
+    "# for mng in range(500):\n",
+    "#     manager =  \n",
+    "#     employee_managerID = np.append(employee_managerID, mng)\n",
+    "# np.random.shuffle(employee_managerID)\n",
+    "\n",
+    "# # print(employee_managerID[0:5])\n",
+    "# # print(employee_managerID[0:5])\n",
+    "# # print(employee_managerID[0:5])\n",
+    "# print(len(set(employee_managerID)))\n",
+    "\n",
+    "\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "c91ccc13",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Experience\n",
+    "employee_experience = np.array([np.random.randint(0, age - 18) for age in employee_age])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c49e9288",
+   "metadata": {},
+   "source": [
+    "5. Generate Salary using Experience and Department."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f4f98975",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "department_base_salary = {\n",
+    "    \"Engineering\": (60000, 90000),\n",
+    "    \"Sales\":       (40000, 65000),\n",
+    "    \"Marketing\":   (45000, 70000),\n",
+    "    \"HR\":          (40000, 60000),\n",
+    "    \"Finance\":     (55000, 80000),\n",
+    "}"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "962a7c50",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Salary\n",
+    "employee_salary = np.array([\n",
+    "    int(np.random.randint(*department_base_salary[dept]) + (exp * 1000))\n",
+    "    for dept, exp in zip(employee_department, employee_experience)\n",
+    "])\n",
+    "# print(f\"{len(employee_salary)} \\n{employee_salary}\")\n"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9646919f",
+   "metadata": {},
+   "source": [
+    "6. Generate Training Hours."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "3b1cf888",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Training Hours\n",
+    "employee_training_hours = np.array([\n",
+    "    np.random.randint(10, 80) if exp < 5 else np.random.randint(5, 40)\n",
+    "    for exp in employee_experience\n",
+    "])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "699149a0",
+   "metadata": {},
+   "source": [
+    "7. Generate Projects Completed."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "9c51e225",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Projects Completed\n",
+    "employee_projects_completed = np.array([\n",
+    "    np.random.randint(exp*6, exp*12) if exp > 0 else 0\n",
+    "    for exp in employee_experience\n",
+    "])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "8b4827b1",
+   "metadata": {},
+   "source": [
+    "8. Generate Attendance Rate."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "1bfc1ba4",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Attendance Rate\n",
+    "employee_attendance_rate = np.round(\n",
+    "    np.random.uniform(0.75, 1.0, size=500), 2\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "b04c725f",
+   "metadata": {},
+   "source": [
+    "9. Generate Department and **Education**.<br>\n",
+    "----------------------------- ^^^^^^^"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "ea3a5517",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Education\n",
+    "employee_education = np.random.choice(\n",
+    "    [\"High School\", \"Bachelor's\", \"Master's\", \"PhD\"],\n",
+    "    size=500,\n",
+    "    p=[0.01, 0.60, 0.32, 0.07]\n",
+    ")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "65c66632",
+   "metadata": {},
+   "source": [
+    "**10. Compute Performance Score using multiple variables.**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "20448b7a",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#Employee Performance Score\n",
+    "\n",
+    "# normalize each component to 0-1 range first\n",
+    "norm_experience = employee_experience / employee_experience.max()\n",
+    "norm_training   = employee_training_hours / employee_training_hours.max()\n",
+    "norm_attendance = employee_attendance_rate\n",
+    "\n",
+    "# education score\n",
+    "education_score_map = {\n",
+    "    \"High School\": 0.1,\n",
+    "    \"Bachelor's\":  0.6,\n",
+    "    \"Master's\":    0.8,\n",
+    "    \"PhD\":         1.0,\n",
+    "}\n",
+    "norm_education = np.array([education_score_map[e] for e in employee_education])\n",
+    "\n",
+    "# weighted formula\n",
+    "employee_performance_score = np.round(\n",
+    "    (norm_experience  * 0.30 +\n",
+    "     norm_attendance  * 0.30 +\n",
+    "     norm_training    * 0.20 +\n",
+    "     norm_education   * 0.20) * 100,\n",
+    "    2\n",
+    ")\n",
+    "\n",
+    "print(f\"Max: %{max(employee_performance_score)}\")\n",
+    "print(f\"Min: %{min(employee_performance_score)}\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "32499d1b",
+   "metadata": {},
+   "source": [
+    "# **Phase 2 - Build DataFrame (11-15)**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "caf2ef55",
+   "metadata": {},
+   "source": [
+    "11. Convert arrays to DataFrame.\n",
+    "12. Rename columns.\n",
+    "13. Reorder columns.\n",
+    "14. Set EmployeeID as index.\n",
+    "15. Display structure."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "8fb6d0de",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import pandas as pd"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f64d2c0e",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "# 11. , 12. , 14.\n",
+    "Employees = pd.DataFrame(\n",
+    "    {\n",
+    "        #Identity\n",
+    "        \"First Name\": employee_first_names,\n",
+    "        \"Last Name\": employee_last_names,\n",
+    "        \"Gender\": employee_gender,\n",
+    "        \"Age\": employee_age,\n",
+    "        # Contacting\n",
+    "        \"Email\": employee_emails,\n",
+    "        \"Phone Number\": employee_phoneNumbers,\n",
+    "        #Employment\n",
+    "        \"Department\": employee_department,\n",
+    "        \"Job Title\": employee_jobTitle,\n",
+    "        \"Experience\": employee_experience,\n",
+    "        \"Salary\": employee_salary,\n",
+    "        \"Training Hours\": employee_training_hours,\n",
+    "        \"Projects Completed\": employee_projects_completed,\n",
+    "        \"Attendance Rate\": employee_attendance_rate,\n",
+    "        \"Education\": employee_education,\n",
+    "        \"Performance Score\": employee_performance_score,\n",
+    "    },\n",
+    "    index=employee_ids\n",
+    ")\n"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "28fa3413",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#14.\n",
+    "\n",
+    "Employees = Employees[[\n",
+    "    # Identity\n",
+    "    \"First Name\", \"Last Name\", \"Gender\", \"Age\", \"Education\",\n",
+    "    # Contact\n",
+    "    \"Email\", \"Phone Number\",\n",
+    "    # Employment\n",
+    "    \"Department\", \"Job Title\", \"Experience\", \"Salary\",\n",
+    "    # Performance\n",
+    "    \"Training Hours\", \"Projects Completed\", \"Attendance Rate\", \"Performance Score\"\n",
+    "]]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "81906e12",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#15.\n",
+    "print(Employees.info())"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "9be11693",
+   "metadata": {},
+   "source": [
+    "# **Phase 3 - Dataset Inspection (16-23)**"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "5f2f3994",
+   "metadata": {},
+   "source": [
+    "16. Head(). 17. Tail(). 18. Shape. 19. Data types. 20. Describe(). 21. Value counts. 22. Unique\n",
+    "values. 23. Memory usage."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "421ad089",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "#16.\n",
+    "print(Employees.head(1))\n",
+    "\n",
+    "#17.\n",
+    "print(Employees.tail(1))\n",
+    "\n",
+    "#18.\n",
+    "print(Employees.shape)\n",
+    "\n",
+    "#19.\n",
+    "print(Employees.dtypes)\n",
+    "\n",
+    "#20.\n",
+    "print(Employees.describe())\n",
+    "\n",
+    "#21.\n",
+    "print(Employees[\"Department\"].value_counts())\n",
+    "print(Employees[\"Education\"].value_counts())\n",
+    "print(Employees[\"Gender\"].value_counts())\n",
+    "\n",
+    "#22.\n",
+    "print(Employees[\"Department\"].unique())\n",
+    "print(Employees[\"Education\"].unique())\n",
+    "print(Employees[\"Gender\"].unique())\n",
+    "\n",
+    "#23.\n",
+    "total_bytes = Employees.memory_usage(deep=True).sum()\n",
+    "print(f\"Total Memory Usage: {total_bytes / 1024:.2f} KB | {total_bytes / 1024 ** 2:.2f} MB\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "584ca331",
+   "metadata": {},
+   "source": [
+    "# **Phase 4 - Data Quality (24-33)**\n",
+    "\n",
+    "24. Insert missing values.\n",
+    "25. Insert duplicates.\n",
+    "26. Insert inconsistent categories.\n",
+    "27. Insert invalid values.\n",
+    "28. Detect missing values.\n",
+    "29. Handle missing values.\n",
+    "30. Remove duplicates.\n",
+    "31. Standardize categories.\n",
+    "32. Detect invalid values.\n",
+    "33. Correct invalid values."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "id": "c2698d12",
+   "metadata": {},
+   "source": [
+    "### **Inserting**"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "id": "f11845f6",
+   "metadata": {},
+   "outputs": [],
+   "source": []
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.10.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
